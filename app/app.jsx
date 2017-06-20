@@ -11,6 +11,10 @@ $(document).foundation();
 require('style!css!sass!applicationStyles')
 
 ReactDOM.render(
-  <RSSApp></RSSApp>,
+  <Router history={hashHistory}>
+    <Route path="/" component={RSSApp}>
+    </Route>
+  </Router>,
+  // <RSSApp></RSSApp>,
   document.getElementById('app')
 );
