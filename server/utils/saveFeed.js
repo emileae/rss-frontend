@@ -38,39 +38,31 @@ var SaveFeed = (channel) => {
       var meta = this.meta; // **NOTE** the "meta" is always available in the context of the feedparser instance
       var item;
 
+      // update the channel document to reflect the title if its not already set
+      // don't return a promise from this instance method,
+      // since we don't want to interfere with promises down the line
+      // TODO: optimise this... its called several times on feedparser.readable
+      channel.updateTitle(meta.title);
+
       // This probably doesn't need to complete before returning success to server.js
       // it just needs to be kicked off
       // but if user wants to see complete list right away, then need to wait...
 
       var items = [];
       while (item = stream.read()) {
-        console.log(item.title);
         // pull the relevant properties form the item object
         item = _.pick(item, ['title', 'description', 'link', 'guid', 'author', 'pubDate']);
         // add the channel id to the feed item
         item._channel = channel._id;
         item.pubDate = item.pubDate.getTime();// convery to milliseconds since 1970
         items.push(item);
-
       };
-
-      // TODO: check this for efficiency
-      // if there are a ton of feeds and we're making DB entries machine gun style
-      // might be a bottleneck
-      // var feed = new Feed(item);
-      // feed.save().then(() => {
-      //   // success, managed to save a feed item
-      //   console.log("saved feed item");
-      // }).catch( (e) => {
-      //   // might be a duplicate or some other error
-      //   console.log("error saving feed item", e);
-      //   next();
-      // });
 
       Feed.insertMany(items).then(()=>{
         // success case, feed has been saved successfully
         resolve();
       }).catch((error) => {
+        console.log(JSON.stringify(error));
         reject("Unable to insertMany: ", error);
       });
 

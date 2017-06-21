@@ -1,5 +1,7 @@
 var React = require('react');
 
+var APIAddChannel = require('APIAddChannel');
+
 var AddChannel = React.createClass({
   handleSubmit: function(e){
     e.preventDefault();
@@ -8,7 +10,12 @@ var AddChannel = React.createClass({
     // validate the url
     if (channelURL.length > 0){
       this.refs.channelURL.value = "";
-      this.props.onAddChannel(channelURL);
+      APIAddChannel.addChannel(channelURL).then((res)=>{
+        console.log("Add channel: ", res);
+      }).catch((err)=>{
+        console.log("Add channel error: ", err);
+      });
+      // this.props.onAddChannel(channelURL);
     }else{
       this.refs.channelURL.focus();// takes user back to input
     }

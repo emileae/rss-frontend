@@ -1,11 +1,19 @@
-var React = require('react')
+var React = require('react');
+var Feed = require("Feed");
 
 var FeedList = React.createClass({
-  render: function() {}
-    return (
-      <div>
+  render: function(){
+    var {feeds} = this.props;
+    var renderFeeds = () => {
+      // return feeds.map((feed)=> {
+      //   return (
+      //     <Feed key={feed._id} {...feed}/>
+      //   )
+      // });
+    };
 
-      </div>
+    return (
+      <div>{renderFeeds()}</div>
     )
   }
 });

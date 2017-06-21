@@ -46,17 +46,17 @@ app.get('/', (req, res) => {
 app.post('/users', (req, res) => {
   // TODO might be a hidden bug here, verify_password isn't part of the user model,
   // but it will try to set it and fail because, there is no verify_password field in User model
-  console.log(JSON.stringify(req.body));
   var user = new User(_.pick(req.body, ['email', 'password', 'name', 'surname']));
   // quick double check for password verification
-  console.log(JSON.stringify(user));
-  console.log("user.password: ", user.password);
-  console.log("user.verify_password: ", user.verify_password);
   if (user.password === req.body.verify_password){
     user.save().then(() => {
       return user.generateAuthToken();// returns another promise
     }).then((token) => {
-      res.header('x-auth', token).send(user);
+      var registerResponse = {
+        "user": user,
+        "token": token
+      };
+      res.header('x-auth', token).send(registerResponse);
     }).catch( (e) => {
       res.status(400).send(e);
     });
@@ -117,7 +117,6 @@ app.delete('/users/me/token', authenticate, (req, res) => {
 // Adds a new channel to the DB
 // only an authenticated user can add a new channel
 app.post('/channels', authenticate, (req, res) => {
-  console.log("have we got the user? ", req.user);
   var body = _.pick(req.body, ['url']);
   body.user = req.user;
   // use the Normalize library to get some kind of uniform URL
@@ -135,18 +134,9 @@ app.post('/channels', authenticate, (req, res) => {
         _channel: channel._id,
         _user: body.user._id
       });
-      // // TODO: make sure this isn't duplicated, a user shouldnt have more than one reference to a channel
+
+      // // TODO: make extra sure this isn't duplicated, a user shouldnt have more than one reference to a channel
       // // duplication may be taken care of since a channel can be uploaded at most once
-      // //... explore edge cases
-      // userChannel.save().then(()=> {
-      //   res.status(200).send(channel);
-      // }).catch((e) => {
-      //   console.log("error saving userChannel");
-      //   res.status(400).send();
-      // });
-
-      // res.status(200).send(channel);
-
       userChannel.save();// this should call the second then
 
     });
@@ -200,16 +190,34 @@ app.delete('/channels/:channelId', authenticate, (req, res) => {
 // User's RSS CHANNELS / FEEDS
 // ==============================
 
+// get a list of channels owned by user
 app.get('/users/channels', authenticate, (req, res) => {
   UserChannel.find({
     _user: req.user._id
-  }).then((channels)=>{
-    res.status(200).send(channels);
+  }).then((userChannels)=>{
+
+    var returnChannelId = (item) => {
+      return item._channel;
+    }
+
+    var channelIds = userChannels.map(returnChannelId);
+
+    console.log("channelIds: ", channelIds);
+
+    Channel.find({
+        '_id': { $in: channelIds}
+    }).then((channels) => {
+      console.log("Foudn channels..........", channels);
+      res.status(200).send(channels);
+    });
+
+    // res.status(200).send(channels);
   }).catch((e)=>{
     res.status(400).send("Couldn't find user's channels: ", e);
   });
 });
 
+// get a list of feeds from a channel owned by a user
 app.get('/channels/:channelId', authenticate, (req, res) => {
   // var channelId = req.params.channelId;
   // first check that channel belongs to user
