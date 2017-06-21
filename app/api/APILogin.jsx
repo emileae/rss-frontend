@@ -10,9 +10,11 @@ var APILogin = {
       email: email,
       password: password
     }).then(function(response){
-      console.log("Axios response: ", response);
+      console.log("Login response: ", response);
+      console.log("TOKEN: ", response.data.token);
+      localStorage.setItem("token", response.data.token);
     }).catch(function (error){
-      console.log("Axios error: ", error);
+      console.log("Login error: ", error);
     });
   }
 }

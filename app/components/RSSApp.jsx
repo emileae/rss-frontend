@@ -3,8 +3,18 @@ var ChannelList = require("ChannelList");
 var AddChannel = require("AddChannel");
 var Login = require('Login');
 
+// API
+var APIFetchChannels = require('APIFetchChannels');
+
 var RSSApp = React.createClass({
   getInitialState: function(){
+
+    // APIFetchChannels.fetchChannels().then((res)=>{
+    //   console.log("Fetch channel res..: ", res);
+    // }).catch((err) => {
+    //   console.log("Fetch channel error..: ", err);
+    // });
+
     return {
       channels: [
         {
@@ -18,10 +28,19 @@ var RSSApp = React.createClass({
       ]
     }
   },
+  fetchChannels: function(){
+    APIFetchChannels.fetchChannels().then((res)=>{
+      console.log("Fetch channel res: ", res);
+    }).catch((err) => {
+      console.log("Fetch channel error: ", err);
+    });
+  },
   handleAddChannel: function (url){
     alert("New channel: " + url);
   },
   render: function(){
+    var fetchedChannels = this.fetchChannels;
+    console.log("fetchedChannels: ", fetchedChannels());
     var {channels} = this.state;
     return (
       <div>
