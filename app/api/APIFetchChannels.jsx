@@ -4,6 +4,7 @@ const RSS_BACKEND_URL = 'http://localhost:3000';
 
 var APIFetchChannels = {
   fetchChannels: function(){
+
     var requestUrl = `${RSS_BACKEND_URL}/users/channels`;
 
     console.log("localStorage", localStorage.getItem('token'));
@@ -14,14 +15,16 @@ var APIFetchChannels = {
 
     // axios.defaults.headers.common['x-auth'] = authToken;
 
-    axios.get(requestUrl).then(function(response){
+    var config = {'x-auth': authToken, "x-BBBBBBBBBBBBBBBBBBBBBBBB": "BB"};
+
+    axios.defaults.headers.common['x-auth'] = authToken;
+
+    return axios.get(requestUrl).then(function(response){
       console.log("Channels: ", response);
-    },
-    headers: {
-        "x-auth": authToken
-     }).catch(function (error){
-      console.log("Channels error: ", error);
+    }).catch((err)=>{
+      console.log("Error fetching channels: ", err);
     });
+
   }
 }
 

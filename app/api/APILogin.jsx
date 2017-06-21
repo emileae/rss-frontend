@@ -6,7 +6,7 @@ var APILogin = {
   login: function(email, password){
     var requestUrl = `${RSS_BACKEND_URL}/users/login`;
 
-    axios.post(requestUrl, {
+    return axios.post(requestUrl, {
       email: email,
       password: password
     }).then(function(response){
@@ -16,6 +16,7 @@ var APILogin = {
     }).catch(function (error){
       console.log("Login error: ", error);
     });
+
   }
 }
 
