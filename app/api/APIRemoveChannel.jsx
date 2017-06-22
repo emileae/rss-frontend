@@ -2,22 +2,20 @@ var axios = require('axios');
 
 const RSS_BACKEND_URL = 'http://localhost:3000';
 
-var APIAddChannel = {
-  addChannel: function(url){
-    var requestUrl = `${RSS_BACKEND_URL}/channels`;
+var APIRemoveChannel = {
+  removeChannel: function(channelId){
+    var requestUrl = `${RSS_BACKEND_URL}/channels/${channelId}`;
 
     var authToken = localStorage.getItem('token');
     axios.defaults.headers.common['x-auth'] = authToken;
 
-    return axios.post(requestUrl, {
-      url: url
-    }).then(function(response){
-      console.log("addChannel response: ", response);
+    return axios.delete(requestUrl).then(function(response){
+      console.log("removeChannel response: ", response);
       if (response.data.action == "notification"){
         alert(response.data.message);
       }
     }).catch(function (error){
-      console.log("addChannel error: ", error);
+      console.log("removeChannel error: ", error);
       if (response.data.action == "notification"){
         alert(response.data.message);
       }
@@ -26,4 +24,4 @@ var APIAddChannel = {
   }
 }
 
-module.exports = APIAddChannel;
+module.exports = APIRemoveChannel;

@@ -7,9 +7,8 @@ var Feed = React.createClass({
     var {description} = this.props;
     return (
       <div>
-        <h3><a href="{link}" target="_blank">{title}</a></h3>
-        <div>
-          {description}
+        <h3><a href={link} target="_blank">{title}</a></h3>
+        <div dangerouslySetInnerHTML={{__html: description}}>
         </div>
       </div>
     )

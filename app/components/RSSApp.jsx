@@ -19,7 +19,8 @@ var RSSApp = React.createClass({
     // });
 
     return {
-      channels: []
+      channels: [],
+      feeds: []
     }
   },
   fetchChannels: function(){
@@ -38,7 +39,12 @@ var RSSApp = React.createClass({
 
   },
   addFeeds: function(feeds){
-    console.log("Render Feeds");
+    console.log("Render Feeds", this.state);
+    this.setState({
+      feeds: [
+        ...feeds
+      ]
+    })
   },
   handleAddChannel: function (url){
     alert("New channel: " + url);
@@ -48,16 +54,29 @@ var RSSApp = React.createClass({
     // console.log("fetchedChannels: ", fetchedChannels());
 
     var {channels} = this.state;
+    var {feeds} = this.state;
     return (
-      <div>
-        <ChannelList channels={channels} addFeeds={this.addFeeds}/>
-        <AddChannel onAddChannel={this.handleAddChannel}/>
-        <Register/>
-        <Login/>
-        <Logout/>
-        <button className="button" onClick={this.fetchChannels}>Fetch Channels</button>
-        <hr/>
-        <FeedList/>
+      <div className="row">
+        <div className="columns large-4">
+          <AddChannel onAddChannel={this.handleAddChannel}/>
+          <ChannelList channels={channels} addFeeds={this.addFeeds}/>
+        </div>
+        <div className="columns large-8">
+          <Register/>
+          <Login/>
+          <Logout/>
+          <button className="button" onClick={this.fetchChannels}>Fetch Channels</button>
+          <hr/>
+          <FeedList feeds={feeds}/>
+        </div>
+        // <ChannelList channels={channels} addFeeds={this.addFeeds}/>
+        // <AddChannel onAddChannel={this.handleAddChannel}/>
+        // <Register/>
+        // <Login/>
+        // <Logout/>
+        // <button className="button" onClick={this.fetchChannels}>Fetch Channels</button>
+        // <hr/>
+        // <FeedList feeds={feeds}/>
       </div>
     )
   }

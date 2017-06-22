@@ -1,11 +1,12 @@
 var React = require('react');
 var APIFetchFeeds = require('APIFetchFeeds');
+var RemoveChannel = require("RemoveChannel");
 
 var Channel = React.createClass({
   fetchFeeds: function(channelId){
     APIFetchFeeds.fetchFeeds(channelId).then((feeds) => {
-      console.log("Got feeds: ", feeds);
-      this.props.addFeeds(feeds);
+      console.log("Got feeds: ", feeds.data);
+      this.props.addFeeds(feeds.data);
     }).catch((err)=> {
       console.log("Fetching feed error");
     });
@@ -14,8 +15,11 @@ var Channel = React.createClass({
     var {title} = this.props;
     var {_id} = this.props;
     return (
-      <div onClick={() => this.fetchFeeds(_id)}>
-        {title}
+      <div>
+        <div onClick={() => this.fetchFeeds(_id)}>
+          {title}
+        </div>
+        <RemoveChannel channelId={_id}/>
       </div>
     )
   }

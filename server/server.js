@@ -13,7 +13,6 @@ var {UserChannel} = require('./models/userChannel');
 var {authenticate} = require('./middleware/authenticate.js');
 var {startUpdateFeeds} = require('./utils/cronJobs');
 var {SaveFeed} = require('./utils/saveFeed');
-// var {AddChannel} = require('./utils/addChannel');
 
 var app = express();
 
@@ -122,32 +121,90 @@ app.post('/channels', authenticate, (req, res) => {
   // use the Normalize library to get some kind of uniform URL
   // TODO: check this normalization to amke sure its fairly standard
   body.url = normalizeUrl(body.url);
-  var channel = new Channel(body);
 
-  channel.save().then(() => {
-    // success, return the saved channel back to user
-    return SaveFeed(channel).then(()=> {
-      console.log("................ resolved saveFeed.....", body);
+  // TODO:
+  // check if channel is already in DB
+  // if so then check that user doesnt own the channel
+  // if user doesnt own the channel then add it to the user's channels
 
-      // start a chained Promise
-      var userChannel = new UserChannel({
-        _channel: channel._id,
+
+  Channel.findOne({
+    url: body.url
+  }).then((channelExists)=>{
+    // Channel exists see if user already own the cahnnel
+    if (channelExists !== null){
+      console.log("This channel exists...........");
+      UserChannel.findOne({
+        _channel: channelExists._id,
         _user: body.user._id
+      }).then((userChannelExists)=>{
+
+        if (userChannelExists !== null){
+          console.log("User already owns this channel");
+            var response = Object.assign({}, userChannelExists, {
+            action: "notification",
+            message: "Channel already saved."
+          });
+          res.status(200).send(response);
+        }else{
+          console.log("User doesnt own this channel");
+          // start a chained Promise
+          var userChannel = new UserChannel({
+            _channel: channelExists._id,
+            _user: body.user._id
+          });
+
+          // // TODO: make extra sure this isn't duplicated, a user shouldnt have more than one reference to a channel
+          // // duplication may be taken care of since a channel can be uploaded at most once
+          userChannel.save().then(()=>{
+              console.log("Created new userChannel");
+              // dont need to save feeds here since the feeds will already be saved and polling
+              var response = Object.assign({}, userChannel, {
+                action: "notification",
+                message: "Channel saved."
+              });
+              res.status(200).send(response);
+          });// this should call the second then
+        };
+
+      })
+    }
+    // channel doesn't exist, so create it
+    else{
+      var channel = new Channel(body);
+      channel.save().then(() => {
+        // success, return the saved channel back to user
+        return SaveFeed(channel).then(()=> {
+          console.log("................ resolved saveFeed.....", body);
+
+          // start a chained Promise
+          var userChannel = new UserChannel({
+            _channel: channel._id,
+            _user: body.user._id
+          });
+
+          // // TODO: make extra sure this isn't duplicated, a user shouldnt have more than one reference to a channel
+          // // duplication may be taken care of since a channel can be uploaded at most once
+          return userChannel.save().then(()=>{
+            var response = Object.assign({}, userChannel, {
+              action: "notification",
+              message: "Channel saved."
+            });
+            res.status(200).send(response);
+          });
+
+        });
       });
-
-      // // TODO: make extra sure this isn't duplicated, a user shouldnt have more than one reference to a channel
-      // // duplication may be taken care of since a channel can be uploaded at most once
-      userChannel.save();// this should call the second then
-
-    });
-  }).then((userChannel)=> {
-    res.status(200).send(userChannel);
-  }).catch( (e) => {
+    }
+  }).catch( (err) => {
     // something went wrong saving to the DB
-    // this is where a duplicate error may occur
-    console.log("Something went wrong... probably with Promises", e);
-    res.status(400).send(e);
+    var response = Object.assign({}, err, {
+      action: "notification",
+      message: "Something went wrong."
+    });
+    res.status(400).send(response);
   });
+
 });
 
 app.patch('/channels/:channelId', authenticate, (req, res) => {
@@ -179,7 +236,11 @@ app.delete('/channels/:channelId', authenticate, (req, res) => {
   UserChannel.confirmUserOwnership(req)
   .then((userChannel)=>{
     UserChannel.findByIdAndRemove(userChannel._id).then((userChannel)=>{
-      res.status(200).send(userChannel);
+      var response = Object.assign({}, userChannel, {
+        action: "notification",
+        message: "Channel removed."
+      });
+      res.status(200).send(response);
     });
   }).catch((e)=>{
     res.status(400).send("Unable to remove channel: ", e);
