@@ -1,4 +1,6 @@
 var React = require('react');
+var {Link} = require('react-router');
+
 var ChannelList = require("ChannelList");
 var FeedList = require("FeedList");
 var AddChannel = require("AddChannel");
@@ -11,21 +13,29 @@ var APIFetchChannels = require('APIFetchChannels');
 
 var RSSApp = React.createClass({
   getInitialState: function(){
-
-    // APIFetchChannels.fetchChannels().then((res)=>{
-    //   console.log("Fetch channel res..: ", res);
-    // }).catch((err) => {
-    //   console.log("Fetch channel error..: ", err);
-    // });
-
+    var token = localStorage.getItem("token");
+    var loggedIn = token.length > 0 ? true : false;
+    console.log("loggedIn", loggedIn);
     return {
+      loggedIn:loggedIn,
+      showLoginModal: false,
       channels: [],
       feeds: []
     }
   },
+  componentWillMount: function(){
+    APIFetchChannels.fetchChannels().then((res)=>{
+      console.log("Fetch channel res: ", res);
+      this.setState({
+        channels: [
+          ...res.data
+        ]
+      })
+    }).catch((err) => {
+      console.log("Fetch channel error: ", err);
+    });
+  },
   fetchChannels: function(){
-    console.log("fetching channels for token: ", localStorage.getItem('token'));
-
     APIFetchChannels.fetchChannels().then((res)=>{
       console.log("Fetch channel res: ", res);
       this.setState({
@@ -46,8 +56,19 @@ var RSSApp = React.createClass({
       ]
     })
   },
+  clearFeeds: function(){
+    this.setState({
+      feeds: []
+    })
+  },
+  clearChannels: function(){
+    this.setState({
+      channels: []
+    })
+  },
   handleAddChannel: function (url){
     alert("New channel: " + url);
+    this.fetchChannels();
   },
   render: function(){
     // var fetchedChannels = this.fetchChannels;
@@ -55,28 +76,44 @@ var RSSApp = React.createClass({
 
     var {channels} = this.state;
     var {feeds} = this.state;
+
+    var {isLoggedIn} = this.props;
+    var addChannelHandler = this.handleAddChannel;
+    var addFeedsHandler = this.addFeeds;
+
+    function renderPrompt(){
+      if (!isLoggedIn){
+        return <p>Please <Link to="/login">Login</Link> or <Link to="/register">Register</Link> to add RSS cahnnels</p>
+      }
+    }
+    function renderAddChannel(){
+      if (isLoggedIn){
+        return <AddChannel onAddChannel={addChannelHandler}/>
+      }
+    }
+    function renderUserChannels(){
+      if (isLoggedIn){
+        return <ChannelList channels={channels} addFeeds={addFeedsHandler}/>
+      }
+    }
+    function renderUserFeeds(){
+      if (isLoggedIn){
+        return <FeedList feeds={feeds}/>
+      }
+    }
+
     return (
-      <div className="row">
-        <div className="columns large-4">
-          <AddChannel onAddChannel={this.handleAddChannel}/>
-          <ChannelList channels={channels} addFeeds={this.addFeeds}/>
+      <div className="container">
+        <div className="row">
+          <div className="columns large-4">
+            {renderAddChannel()}
+            {renderUserChannels()}
+          </div>
+          <div className="columns large-8">
+            {renderPrompt()}
+            {renderUserFeeds()}
+          </div>
         </div>
-        <div className="columns large-8">
-          <Register/>
-          <Login/>
-          <Logout/>
-          <button className="button" onClick={this.fetchChannels}>Fetch Channels</button>
-          <hr/>
-          <FeedList feeds={feeds}/>
-        </div>
-        // <ChannelList channels={channels} addFeeds={this.addFeeds}/>
-        // <AddChannel onAddChannel={this.handleAddChannel}/>
-        // <Register/>
-        // <Login/>
-        // <Logout/>
-        // <button className="button" onClick={this.fetchChannels}>Fetch Channels</button>
-        // <hr/>
-        // <FeedList feeds={feeds}/>
       </div>
     )
   }
