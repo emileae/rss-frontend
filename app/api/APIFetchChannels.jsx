@@ -15,6 +15,9 @@ var APIFetchChannels = {
       return response;
     }).catch((err)=>{
       console.log("Error fetching channels: ", err);
+      if (err.status == 401){
+        localStorage.setItem('token', "");
+      }
     });
 
   }

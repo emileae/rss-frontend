@@ -13,6 +13,7 @@ var {UserChannel} = require('./models/userChannel');
 var {authenticate} = require('./middleware/authenticate.js');
 var {startUpdateFeeds} = require('./utils/cronJobs');
 var {SaveFeed} = require('./utils/saveFeed');
+var validator = require('validator');
 
 var app = express();
 
@@ -56,11 +57,29 @@ app.post('/users', (req, res) => {
         "token": token
       };
       res.header('x-auth', token).send(registerResponse);
-    }).catch( (e) => {
-      res.status(400).send(e);
+    }).catch( (err) => {
+      console.log("User registration err: ", err);
+      if (err.code === 11000){
+        console.log("duplication error");
+        var response = {
+          action: "notification",
+          message: "That user already exists, try another email."
+        };
+        res.status(400).send(response);
+      }else{
+        var response = {
+          action: "notification",
+          message: err
+        };
+        res.status(400).send(response);
+      }
     });
   }else{
-    res.status(400).send("Passwords don't match");
+    var response = {
+      action: "notification",
+      message: "Passwords don't match."
+    };
+    res.status(200).send(response);
   };
 
 });
@@ -169,34 +188,66 @@ app.post('/channels', authenticate, (req, res) => {
 
       })
     }
+
     // channel doesn't exist, so create it
     else{
-      var channel = new Channel(body);
-      channel.save().then(() => {
-        // success, return the saved channel back to user
-        return SaveFeed(channel).then(()=> {
-          console.log("................ resolved saveFeed.....", body);
+      // Check if URL is a valid URL (may not be a valid RSS url though)
+      if (validator.isURL(body.url)){
 
-          // start a chained Promise
-          var userChannel = new UserChannel({
-            _channel: channel._id,
-            _user: body.user._id
-          });
+        var channel = new Channel(body);
+        channel.save().then(() => {
+          console.log("Channel tentatively saved");
+          // success, return the saved channel back to user
+          return SaveFeed(channel).then(()=> {
+            console.log("................ resolved saveFeed.....", body);
 
-          // // TODO: make extra sure this isn't duplicated, a user shouldnt have more than one reference to a channel
-          // // duplication may be taken care of since a channel can be uploaded at most once
-          return userChannel.save().then(()=>{
-            var response = Object.assign({}, userChannel, {
-              action: "notification",
-              message: "Channel saved."
+            // start a chained Promise
+            var userChannel = new UserChannel({
+              _channel: channel._id,
+              _user: body.user._id
             });
+
+            // // TODO: make extra sure this isn't duplicated, a user shouldnt have more than one reference to a channel
+            // // duplication may be taken care of since a channel can be uploaded at most once
+            return userChannel.save().then((resolveMsg)=>{
+              console.log(",.,,.,.,.,.,. ", resolveMsg);
+              var response = Object.assign({}, userChannel, {
+                action: "notification",
+                message: "Channel saved."
+              });
+              res.status(200).send(response);
+            });
+
+          }).catch((err)=>{
+            console.log("Error saving the C-H-A-N-N-E-L", err);
+            var response = {
+              action: "notification",
+              message: err
+            };
             res.status(200).send(response);
           });
-
+        }).catch((err)=>{
+          console.log("/./././././././. error saving the channel: ", err);
+          var response = Object.assign({}, userChannel, {
+            action: "notification",
+            message: "Unable to save Channel"
+          });
+          res.status(200).send(response);
         });
-      });
+
+      }else{
+        var response = {
+          action: "notification",
+          message: "Not a valid RSS URL"
+        };
+        res.status(200).send(response);
+      }// end validator if statement
+
     }
   }).catch( (err) => {
+
+    console.log("____________ error finding the channel: ", err);
+
     // something went wrong saving to the DB
     var response = Object.assign({}, err, {
       action: "notification",

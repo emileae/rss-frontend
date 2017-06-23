@@ -13,13 +13,17 @@ var APIAddChannel = {
       url: url
     }).then(function(response){
       console.log("addChannel response: ", response);
-      if (response.data.action == "notification"){
-        alert(response.data.message);
+      if (response.data.hasOwnProperty('action')){
+        if (response.data.action == "notification"){
+          alert(response.data.message);
+        }
       }
     }).catch(function (error){
       console.log("addChannel error: ", error);
-      if (response.data.action == "notification"){
-        alert(response.data.message);
+      if (error.data.hasOwnProperty('action')){
+        if (error.data.action == "notification"){
+          alert(error.data.message);
+        }
       }
     });
 

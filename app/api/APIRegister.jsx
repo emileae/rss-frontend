@@ -17,8 +17,21 @@ var APILogin = {
       surname: surname
     }).then(function(response){
       localStorage.setItem("token", response.data.token);
+      console.log("API Registration success: ", response);
+      if (response.data.hasOwnProperty('action')){
+        if (response.data.action == "notification"){
+          alert(response.data.message);
+        }
+      }
+      return response;
     }).catch(function (error){
-      console.log("Registration error: ", error);
+      console.log("API Registration error: ", error);
+      if (error.data.hasOwnProperty('action')){
+        if (error.data.action == "notification"){
+          alert(error.data.message);
+        }
+      }
+      return error;
     });
 
   }

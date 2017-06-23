@@ -24,6 +24,7 @@ var RSSApp = React.createClass({
     }
   },
   componentWillMount: function(){
+    console.log("Component will mount... RSSApp");
     APIFetchChannels.fetchChannels().then((res)=>{
       console.log("Fetch channel res: ", res);
       this.setState({
@@ -66,8 +67,7 @@ var RSSApp = React.createClass({
       channels: []
     })
   },
-  handleAddChannel: function (url){
-    alert("New channel: " + url);
+  handleFetchChannel: function (url){
     this.fetchChannels();
   },
   render: function(){
@@ -78,7 +78,7 @@ var RSSApp = React.createClass({
     var {feeds} = this.state;
 
     var {isLoggedIn} = this.props;
-    var addChannelHandler = this.handleAddChannel;
+    var fetchChannelHandler = this.handleFetchChannel;
     var addFeedsHandler = this.addFeeds;
 
     function renderPrompt(){
@@ -88,7 +88,7 @@ var RSSApp = React.createClass({
     }
     function renderAddChannel(){
       if (isLoggedIn){
-        return <AddChannel onAddChannel={addChannelHandler}/>
+        return <AddChannel onAddChannel={fetchChannelHandler}/>
       }
     }
     function renderUserChannels(){
@@ -103,7 +103,7 @@ var RSSApp = React.createClass({
     }
 
     return (
-      <div className="container">
+      <div className="feed-container">
         <div className="row">
           <div className="columns large-4">
             {renderAddChannel()}

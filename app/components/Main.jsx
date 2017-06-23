@@ -14,6 +14,11 @@ var Main = React.createClass({
   getInitialState: function(){
     // keep login state in main parent
     var token = localStorage.getItem("token");
+    if (!token || token === null || token === undefined){
+      localStorage.setItem('token', '');
+      token = '';
+    }
+
     var loggedIn = token.length > 0 ? true : false;
 
     return {
