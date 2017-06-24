@@ -1,6 +1,6 @@
 var axios = require('axios');
 
-const RSS_BACKEND_URL = 'http://localhost:3000';
+const RSS_BACKEND_URL = 'http://23.251.133.59/';
 
 var APILogin = {
   register: function(email, password, verify_password, name, surname){
