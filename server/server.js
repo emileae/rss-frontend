@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 });
 
 // Start cron jobs to update feeds
-// startUpdateFeeds();
+startUpdateFeeds();
 
 app.get('/', (req, res) => {
   console.log("hello");
