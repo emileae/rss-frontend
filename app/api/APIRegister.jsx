@@ -4,7 +4,7 @@ const RSS_BACKEND_URL = 'http://23.251.133.59/';
 
 var APILogin = {
   register: function(email, password, verify_password, name, surname){
-    var requestUrl = `${RSS_BACKEND_URL}/users`;
+    var requestUrl = `http://23.251.133.59/users`;
 
     console.log("password: ", password);
     console.log("verify_password: ", verify_password);
