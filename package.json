@@ -11,11 +11,22 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.9.1",
+    "bcryptjs": "^2.3.0",
+    "body-parser": "^1.15.2",
+    "cron": "^1.2.1",
     "express": "^4.13.4",
+    "feedparser": "^2.2.0",
+    "jsonwebtoken": "^7.1.9",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.5",
+    "mongoose": "^4.5.9",
+    "normalize-url": "^1.9.1",
     "react": "^0.14.7",
     "react-addons-test-utils": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-router": "^2.0.0",
+    "request": "^2.81.0",
+    "validator": "^7.0.0",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
