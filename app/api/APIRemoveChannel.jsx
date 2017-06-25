@@ -1,7 +1,7 @@
 var axios = require('axios');
 
 const RSS_BACKEND_URL = 'http://130.211.100.142/';
-
+// TODO: extract url into ENV variable
 var APIRemoveChannel = {
   removeChannel: function(channelId){
     var requestUrl = `${RSS_BACKEND_URL}/channels/${channelId}`;
