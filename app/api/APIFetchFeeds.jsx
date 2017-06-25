@@ -1,6 +1,6 @@
 var axios = require('axios');
 
-const RSS_BACKEND_URL = 'http://130.211.100.142/';
+const RSS_BACKEND_URL = 'http://130.211.100.142';
 
 var APIFetchFeeds = {
   fetchFeeds: function(channelId){
