@@ -1,3 +1,15 @@
+var env = process.env.NODE_ENV || 'development';
+
+console.log("env **********", env);
+
+if (env === 'development'){
+  process.env.PORT = 3000;
+  process.env.MONGODB_URI = 'mongodb://localhost:27017/RSS'
+}else if (env === 'test'){
+  process.env.PORT = 3000;
+  process.env.MONGODB_URI = 'mongodb://localhost:27017/RSSTest'
+}
+
 const express = require('express');
 const bodyParser = require('body-parser');
 // const FeedParser = require('feedparser');
@@ -33,6 +45,7 @@ startUpdateFeeds();
 
 app.get('/', (req, res) => {
   console.log("hello");
+  res.send('hello world');
 });
 
 // ==============================
@@ -338,11 +351,11 @@ app.get('/channels/:channelId', authenticate, (req, res) => {
   .then((userChannel)=>{
     return Feed.find({
       _channel: userChannel._channel
-    }).limit(20);
+    }).sort({pubDate: -1}).limit(20);
   }).then((feedItems)=>{
       res.status(200).send(feedItems);
   }).catch((e)=>{
-    res.status(400).send("Couldn't locate feeds for channel ", e);
+    res.status(400).send("Couldn't locate feeds for channel ");
   });
 });
 
@@ -350,3 +363,6 @@ app.get('/channels/:channelId', authenticate, (req, res) => {
 app.listen(3000, () => {
   console.log("Started on port 3000");
 });
+
+// export for testing
+module.exports.app = app;
