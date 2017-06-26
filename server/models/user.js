@@ -38,6 +38,9 @@ var UserSchema = new mongoose.Schema({
     surname: {
       type: String,
       trim: true,
+    },
+    loginAttempts: {
+      type: Number
     }
 });
 
