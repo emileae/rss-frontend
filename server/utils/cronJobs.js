@@ -6,7 +6,7 @@ var {UpdateFeed} = require('./updateFeed');
 
 // cron job run every minute
 var startUpdateFeeds = () => {
-  new CronJob('0 */1 * * * *', function() {
+  new CronJob('0 */5 * * * *', function() {
     // TODO: paginate this... async pages, in increments of 100 or so... may go over the 5min limit after a while
     Channel.find().then((channels)=>{
       for (var i=0; i<channels.length; i++){

@@ -45,6 +45,7 @@ var UserSchema = new mongoose.Schema({
     },
     unBlockTime: {
       type: Date,
+      default: new Date().getTime()
     }
 });
 
