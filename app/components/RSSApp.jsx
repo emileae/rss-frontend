@@ -49,6 +49,21 @@ var RSSApp = React.createClass({
     });
 
   },
+  removeChannel: function(channelId){
+    console.log("REMOVE CHANNELLLLL");
+    var currentChannels = this.state.channels;
+    var newChannels = [];
+    for (var i=0; i<currentChannels.length; i++){
+      if (currentChannels[i]._id != channelId){
+        newChannels.push(currentChannels[i]);
+      }
+    }
+    this.setState({
+      channels: [
+        ...newChannels
+      ]
+    });
+  },
   addFeeds: function(feeds){
     console.log("Render Feeds", this.state);
     this.setState({
@@ -81,6 +96,7 @@ var RSSApp = React.createClass({
     var fetchChannelHandler = this.handleFetchChannel;
     var addFeedsHandler = this.addFeeds;
     var clearFeeds = this.clearFeeds;
+    var removeChannel = this.removeChannel;
 
     function renderPrompt(){
       if (!isLoggedIn){
@@ -94,7 +110,7 @@ var RSSApp = React.createClass({
     }
     function renderUserChannels(){
       if (isLoggedIn){
-        return <ChannelList channels={channels} addFeeds={addFeedsHandler} clearFeeds={clearFeeds}/>
+        return <ChannelList channels={channels} addFeeds={addFeedsHandler} removeChannel={removeChannel} clearFeeds={clearFeeds}/>
       }
     }
     function renderUserFeeds(){

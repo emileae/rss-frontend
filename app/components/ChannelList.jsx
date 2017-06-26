@@ -7,9 +7,11 @@ var ChannelList = React.createClass({
   },
   removeChannel: function(_id){
     console.log("removed channel...");
-    this.setState({
-      deleted: this.state.deleted.concat([_id])
-    })
+    var {removeChannel}=this.props;
+    removeChannel(_id);
+    // this.setState({
+    //   deleted: this.state.deleted.concat([_id])
+    // })
   },
   render: function(){
     var channels = this.props.channels;
