@@ -11,9 +11,9 @@ var APIRemoveChannel = {
 
     return axios.delete(requestUrl).then(function(response){
       console.log("removeChannel response: ", response);
-      if (response.data.action == "notification"){
-        alert(response.data.message);
-      }
+      // if (response.data.action == "notification"){
+      //   alert(response.data.message);
+      // }
     }).catch(function (error){
       console.log("removeChannel error: ", error);
       if (response.data.action == "notification"){

@@ -12,14 +12,14 @@ var Channel = React.createClass({
     });
   },
   render: function(){
-    var {title} = this.props;
+    var {title, removeChannel} = this.props;
     var {_id} = this.props;
     return (
-      <div>
-        <div onClick={() => this.fetchFeeds(_id)}>
+      <div className="callout">
+        <RemoveChannel channelId={_id} removeChannel={removeChannel}/>
+        <p className="channel-title" onClick={() => this.fetchFeeds(_id)}>
           {title}
-        </div>
-        <RemoveChannel channelId={_id}/>
+        </p>
       </div>
     )
   }

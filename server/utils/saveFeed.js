@@ -40,7 +40,7 @@ var SaveFeed = (channel) => {
             // success case, feed has been saved successfully
             resolve();
           }).catch((error) => {
-            console.log(JSON.stringify(error));
+            // console.log(JSON.stringify(error));
             reject("Unable to insertMany: ", error);
           });
         };

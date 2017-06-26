@@ -11,21 +11,22 @@ var APIAddChannel = {
 
     return axios.post(requestUrl, {
       url: url
-    }).then(function(response){
-      console.log("addChannel response: ", response);
-      if (response.data.hasOwnProperty('action')){
-        if (response.data.action == "notification"){
-          alert(response.data.message);
-        }
-      }
-    }).catch(function (error){
-      console.log("addChannel error: ", error);
-      if (error.data.hasOwnProperty('action')){
-        if (error.data.action == "notification"){
-          alert(error.data.message);
-        }
-      }
     });
+    // .then(function(response){
+    //   console.log("addChannel response: ", response);
+    //   if (response.data.hasOwnProperty('action')){
+    //     // if (response.data.action == "notification"){
+    //     //   alert(response.data.message);
+    //     // }
+    //   }
+    // }).catch(function (error){
+    //   console.log("addChannel error: ", error);
+    //   if (error.data.hasOwnProperty('action')){
+    //     if (error.data.action == "notification"){
+    //       alert(error.data.message);
+    //     }
+    //   }
+    // });
 
   }
 }

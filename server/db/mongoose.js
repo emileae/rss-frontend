@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-console.log(".... SETUP MONGODB ....");
 mongoose.Promise = global.Promise;// tell mongoose that we're using promises not callbacks... only do thins once here
 
 //'mongodb://localhost:27017/RSS' // 'mongodb://mongo:27017/RSS'

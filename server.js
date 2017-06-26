@@ -212,7 +212,6 @@ app.post('/channels', authenticate, (req, res) => {
           console.log("Channel tentatively saved");
           // success, return the saved channel back to user
           return SaveFeed(channel).then(()=> {
-            console.log("................ resolved saveFeed.....", body);
 
             // start a chained Promise
             var userChannel = new UserChannel({
@@ -223,7 +222,6 @@ app.post('/channels', authenticate, (req, res) => {
             // // TODO: make extra sure this isn't duplicated, a user shouldnt have more than one reference to a channel
             // // duplication may be taken care of since a channel can be uploaded at most once
             return userChannel.save().then((resolveMsg)=>{
-              console.log(",.,,.,.,.,.,. ", resolveMsg);
               var response = Object.assign({}, userChannel, {
                 action: "notification",
                 message: "Channel saved."
@@ -232,7 +230,7 @@ app.post('/channels', authenticate, (req, res) => {
             });
 
           }).catch((err)=>{
-            console.log("Error saving the C-H-A-N-N-E-L", err);
+            console.log("____________ error saving the C-H-A-N-N-E-L", err);
             var response = {
               action: "notification",
               message: err
@@ -240,7 +238,7 @@ app.post('/channels', authenticate, (req, res) => {
             res.status(200).send(response);
           });
         }).catch((err)=>{
-          console.log("/./././././././. error saving the channel: ", err);
+          console.log("____________ error saving the channel: ", err);
           var response = Object.assign({}, userChannel, {
             action: "notification",
             message: "Unable to save Channel"
@@ -327,12 +325,12 @@ app.get('/users/channels', authenticate, (req, res) => {
 
     var channelIds = userChannels.map(returnChannelId);
 
-    console.log("channelIds: ", channelIds);
+    // console.log("channelIds: ", channelIds);
 
     Channel.find({
         '_id': { $in: channelIds}
     }).then((channels) => {
-      console.log("Foudn channels..........", channels);
+      // console.log("Foudn channels..........", channels);
       res.status(200).send(channels);
     });
 

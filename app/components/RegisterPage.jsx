@@ -42,7 +42,7 @@ var RegisterPage = React.createClass({
 
     if (!badEmail && !badPassword && !badVerifyPassword){
       APIRegister.register(email, password, verify_password, name, surname).then((res)=>{
-        console.log("registration res: ", res);
+        // console.log("registration res: ", res);
         if (res.status === 200){
           this.refs.email.value = "";
           this.refs.password.value = "";
@@ -71,7 +71,7 @@ var RegisterPage = React.createClass({
   onPWChange: function(evt){
     this.refs.password.value = evt.target.value;
     var val = zxcvbn(evt.target.value);
-    console.log("score: ", val);
+    // console.log("score: ", val);
     var pwText = "";
     switch(val.score) {
     case 0:
