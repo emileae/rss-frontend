@@ -141,7 +141,7 @@ var RegisterPage = React.createClass({
 
     return (
       <div className="row">
-        <div className="columns expand text-center">
+        <div className="columns  large-6 large-offset-3 text-center">
           <h4>Register</h4>
             <form onSubmit={this.handleRegister}>
               <input type="text" ref="name" placeholder="Your name"></input>

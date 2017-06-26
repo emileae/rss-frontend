@@ -100,7 +100,7 @@ var RSSApp = React.createClass({
 
     function renderPrompt(){
       if (!isLoggedIn){
-        return <p>Please <Link to="/login">Login</Link> or <Link to="/register">Register</Link> to add RSS cahnnels</p>
+        return <p>Please <Link to="/login">Login</Link> or <Link to="/register">Register</Link> to add RSS channels</p>
       }
     }
     function renderAddChannel(){

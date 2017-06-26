@@ -7,6 +7,7 @@ var $ = require('jquery');
 var LoginPage = React.createClass({
   getInitialState: function(){
     return {
+      invalidLogin: false,
       blocked: false,
       attempts: 0
     }
@@ -19,9 +20,10 @@ var LoginPage = React.createClass({
     APILogin.login(email, password).then((res)=>{
       console.log("login res: ", res);
       var {unBlockTime, token, loginAttempts} = res.data;
-      console.log("unBlockTime: ", unBlockTime);
+      console.log("loginAttempts: ", loginAttempts);
       if (loginAttempts > 0){
         this.setState({
+          invalidLogin: false,
           attempts: loginAttempts
         });
       }
@@ -33,10 +35,15 @@ var LoginPage = React.createClass({
       console.log("login error: ", err);
       var {unBlockTime, token, loginAttempts} = err.data;
       unBlockTime = new Date(unBlockTime).getTime();
-      console.log("unBlockTime err: ", unBlockTime);
+      console.log("loginAttempts err: ", loginAttempts);
       if (loginAttempts > 0){
         this.setState({
+          invalidLogin: false,
           attempts: loginAttempts
+        });
+      }else if (loginAttempts === undefined){
+        this.setState({
+          invalidLogin: true
         });
       }
       if (unBlockTime > new Date().getTime()){
@@ -46,6 +53,7 @@ var LoginPage = React.createClass({
         console.log("minutesToUnBlock: ", minutesToUnBlock);
 
         this.setState({
+          invalidLogin: false,
           blocked: true,
           unBlockTime: unBlockTime,
           minutesToUnBlock: minutesToUnBlock
@@ -66,7 +74,7 @@ var LoginPage = React.createClass({
   },
   render: function(){
     var {handleLogin} = this.props;
-    var {attempts, blocked, minutesToUnBlock} = this.state;
+    var {attempts, blocked, minutesToUnBlock, invalidLogin} = this.state;
     function badLogins(){
       if (attempts > 0 && !blocked){
         return (
@@ -76,11 +84,15 @@ var LoginPage = React.createClass({
         return(
           <p>Your account has been blocked, you can login in {minutesToUnBlock} minute(s).</p>
         )
+      }else if (invalidLogin){
+        return(
+          <p>Invalid login.</p>
+        )
       }
     }
     return (
       <div className="row">
-        <div className="columns expand text-center">
+        <div className="columns large-6 large-offset-3 text-center">
           <h4>Login</h4>
           {badLogins()}
           <form onSubmit={this.handleLogin}>
