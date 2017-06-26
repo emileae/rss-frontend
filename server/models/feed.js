@@ -16,6 +16,7 @@ var FeedSchema = new mongoose.Schema({
   },
   guid: {
     type: String,
+    unique: true,
   },
   title: {
     type: String

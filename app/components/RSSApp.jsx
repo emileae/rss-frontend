@@ -80,6 +80,7 @@ var RSSApp = React.createClass({
     var {isLoggedIn} = this.props;
     var fetchChannelHandler = this.handleFetchChannel;
     var addFeedsHandler = this.addFeeds;
+    var clearFeeds = this.clearFeeds;
 
     function renderPrompt(){
       if (!isLoggedIn){
@@ -93,7 +94,7 @@ var RSSApp = React.createClass({
     }
     function renderUserChannels(){
       if (isLoggedIn){
-        return <ChannelList channels={channels} addFeeds={addFeedsHandler}/>
+        return <ChannelList channels={channels} addFeeds={addFeedsHandler} clearFeeds={clearFeeds}/>
       }
     }
     function renderUserFeeds(){

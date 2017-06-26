@@ -91,7 +91,7 @@ var SaveFeed = (channel) => {
       var meta = this.meta; // **NOTE** the "meta" is always available in the context of the feedparser instance
       var item;
 
-      console.log("Start parsing feed.......");
+      // console.log("Start parsing feed.......");
 
       // update the channel document to reflect the title if its not already set
       // don't return a promise from this instance method,

@@ -116,15 +116,33 @@ app.post('/users/login', (req, res) => {
       // TODO: change this to not include the token in the response
       // can instead host everything on the same domain, then get token from the header
       // no need to expose the header
+      var timeToUnBlock = null;
+      if (user.unBlockTime){
+        timeToUnBlock = user.unBlockTime;
+      }
       var loginResponse = {
-        "user": user,
-        "token": token
+        user: user,
+        unBlockTime: timeToUnBlock,
+        loginAttempts: 0,
+        token: token
       };
       res.header('x-auth', token).send(loginResponse);
     });
   }).catch((e) => {
     console.log("login error: ", e);
-    res.status(400).send();
+    var userProperties = _.pick(e, ['unBlockTime', 'loginAttempts']);
+    timeToUnBlock = null;
+    if (userProperties.unBlockTime){
+      timeToUnBlock = userProperties.unBlockTime;
+    }
+    var response = {
+      user: null,
+      unBlockTime: timeToUnBlock,
+      loginAttempts: userProperties.loginAttempts,
+      token: '',
+      error: e
+    }
+    res.status(400).send(response);
   });
 
 });

@@ -40,7 +40,11 @@ var UserSchema = new mongoose.Schema({
       trim: true,
     },
     loginAttempts: {
-      type: Number
+      type: Number,
+      default: 0
+    },
+    unBlockTime: {
+      type: Date,
     }
 });
 
@@ -112,10 +116,35 @@ UserSchema.statics.findByCredentials = function(email, password){
     // bcrypt only supports callbacks, so make a new promise
     return new Promise((resolve, reject) => {
       bcrypt.compare(password, user.password, function(err, res) {
+        console.log("user.unBlockTime: ", user.unBlockTime);
           if (res){
-            resolve(user);
+            if (user.unBlockTime === undefined){
+              user.unBlockTime = new Date( (new Date()).getTime() - 1000 * 60 );
+            }
+            if (user.unBlockTime < new Date()){
+              if (user.loginAttempts > 0){
+                // reset bad login attempts
+                user.loginAttempts = 0;
+                user.save();
+              }
+              console.log("Aaaa");
+              resolve(user);
+            }else{
+              console.log("Bbbb");
+              reject(user);
+            }
+
           }else{
-            reject();
+            console.log("...Bad login attempt...");
+            user.loginAttempts++;
+            if (user.loginAttempts >= 5){
+              user.loginAttempts = 0;
+              var blockUntil = new Date(new Date().getTime() + 5*60000);
+              user.unBlockTime = blockUntil;
+              console.log("Block user");
+            }
+            user.save();
+            reject(user);
           }
       });
     });

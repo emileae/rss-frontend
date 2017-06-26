@@ -14,13 +14,14 @@ var ChannelList = React.createClass({
   render: function(){
     var channels = this.props.channels;
     var addFeeds = this.props.addFeeds;
+    var clearFeeds = this.props.clearFeeds;
 
     var renderChannels = () => {
       return channels
         .filter(channel => this.state.deleted.indexOf(channel._id) === -1)
         .map((channel)=> {
         return (
-          <Channel key={channel._id} {...channel} addFeeds={addFeeds} removeChannel={this.removeChannel}/>
+          <Channel key={channel._id} {...channel} addFeeds={addFeeds} removeChannel={this.removeChannel} clearFeeds={clearFeeds}/>
         )
       });
     };

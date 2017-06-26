@@ -12,9 +12,10 @@ var RemoveChannel = React.createClass({
   removeChannel: function(){
     console.log("------- remove channel......");
     if (this.state.confirmed === 1){
-      var {channelId, removeChannel} = this.props;
+      var {channelId, removeChannel, clearFeeds} = this.props;
       APIRemoveChannel.removeChannel(channelId);
       removeChannel(channelId);
+      clearFeeds();
       this.setState({
         confirmed: 2
       });

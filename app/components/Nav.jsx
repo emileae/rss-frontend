@@ -35,7 +35,9 @@ var Nav = React.createClass({
         <div className="top-bar">
           <div className="top-bar-left">
             <ul className="dropdown menu" data-dropdown-menu>
-              <li className="menu-text">Turbulent RSS</li>
+              <li className="menu-text">
+                <a href="#">Turbulent RSS</a>
+              </li>
               <li>
                 <a href="#">Home</a>
               </li>
